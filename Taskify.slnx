@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Taskify.Api/Taskify.Api.csproj" />
+  <Project Path="Taskify.Application/Taskify.Application.csproj" Id="4099dbda-8f74-4546-b835-f8e8749b2c86" />
+  <Project Path="Taskify.Domain/Taskify.Domain.csproj" Id="7866f117-d99f-4cdb-a9f6-2504530d7b80" />
+  <Project Path="Taskify.Infrastructure/Taskify.Infrastructure.csproj" Id="d4ae17e0-6c92-4cf5-bc3e-d266f9d3fb32" />
+</Solution>

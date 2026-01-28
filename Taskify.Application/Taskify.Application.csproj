@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Taskify.Domain\Taskify.Domain.csproj" />
+    <ProjectReference Include="..\Taskify.Infrastructure\Taskify.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
