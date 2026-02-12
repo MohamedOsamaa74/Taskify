@@ -7,8 +7,8 @@ namespace Taskify.Domain.Common.Interfaces
     public interface IAuditable
     {
         DateTime CreatedAt { get; set; }
-        int? CreatedBy { get; set; }
+        Guid? CreatedBy { get; set; }
         DateTime? UpdatedAt { get; set; }
-        int? UpdatedBy { get; set; }
+        Guid? UpdatedBy { get; set; }
     }
 }

@@ -21,16 +21,15 @@ namespace Taskify.Domain.Entities
 
         #region Audit
         public DateTime CreatedAt { get; set; }
-        public int? CreatedBy { get; set; }
+        public Guid? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public int? UpdatedBy { get; set; }
+        public Guid? UpdatedBy { get; set; }
         public bool IsDeletable { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public int? DeletedBy { get; set; }
+        public Guid? DeletedBy { get; set; }
         #endregion
 
         #region Navigation Properties
-        public ICollection<Team> Teams { get; set; } = [];
         public ICollection<UserTeam> UserTeams { get; set; } = [];
         public ICollection<ToDoList> ToDoLists { get; set; } = [];
         #endregion
