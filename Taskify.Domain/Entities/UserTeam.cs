@@ -8,7 +8,7 @@ namespace Taskify.Domain.Entities
     public class UserTeam : FullyAuditedBaseEntity<int>
     {
         #region Foreign Keys
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public int TeamId { get; set; }
         #endregion
 
