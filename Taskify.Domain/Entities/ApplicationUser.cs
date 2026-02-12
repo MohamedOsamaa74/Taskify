@@ -8,7 +8,7 @@ using Taskify.Domain.Common.Interfaces;
 
 namespace Taskify.Domain.Entities
 {
-    public class ApplicationUser : IdentityUser<int>, IBaseEntity<int>, IAuditable, IDeletable
+    public class ApplicationUser : IdentityUser<Guid>, IAuditable, IDeletable
     {
         #region Properties
         [Required]
@@ -30,8 +30,9 @@ namespace Taskify.Domain.Entities
         #endregion
 
         #region Navigation Properties
-        public ICollection<Group> Groups { get; set; } = [];
-        public ICollection<UserGroup> UserGroups { get; set; } = [];
+        public ICollection<Team> Teams { get; set; } = [];
+        public ICollection<UserTeam> UserTeams { get; set; } = [];
+        public ICollection<ToDoList> ToDoLists { get; set; } = [];
         #endregion
     }
 }

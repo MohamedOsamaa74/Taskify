@@ -5,15 +5,15 @@ using Taskify.Domain.Common.Classes;
 
 namespace Taskify.Domain.Entities
 {
-    public class UserGroup : FullyAuditedBaseEntity<int>
+    public class UserTeam : FullyAuditedBaseEntity<int>
     {
         #region Foreign Keys
         public int UserId { get; set; }
-        public int GroupId { get; set; }
+        public int TeamId { get; set; }
         #endregion
 
         #region Navigation Properties
-        public Group Group { get; set; }
+        public Team Team { get; set; }
         public ApplicationUser User { get; set; }
         #endregion
     }

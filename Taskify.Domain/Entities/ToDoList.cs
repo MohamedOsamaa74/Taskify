@@ -13,12 +13,14 @@ namespace Taskify.Domain.Entities
         #endregion
 
         #region ForeignKeys
-        public int GroupId { get; set; }
+        public int TeamId { get; set; }
+        public Guid ApplicationUserId { get; set; }
         #endregion
 
         #region Navigation Properties
         public ICollection<TaskItem> Items { get; set; }
-        public Group Group { get; set; }
+        public Team Team { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
         #endregion
     }
 }

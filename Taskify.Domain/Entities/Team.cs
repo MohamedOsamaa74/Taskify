@@ -6,7 +6,7 @@ using Taskify.Domain.Common.Classes;
 
 namespace Taskify.Domain.Entities
 {
-    public class Group : FullyAuditedBaseEntity<int>
+    public class Team : FullyAuditedBaseEntity<int>
     {
         #region Properties
         [Required, MaxLength(50)]
@@ -17,7 +17,8 @@ namespace Taskify.Domain.Entities
 
         #region Navigation Properties
         public ICollection<ApplicationUser> Users { get; set; } = [];
-        public ICollection<UserGroup> UserGroups { get; set; } = [];
+        public ICollection<UserTeam> UserTeams { get; set; } = [];
+        public ICollection<ToDoList> ToDoLists { get; set; } = [];
         #endregion
     }
 }
