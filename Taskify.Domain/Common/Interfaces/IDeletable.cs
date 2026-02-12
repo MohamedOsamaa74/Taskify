@@ -8,6 +8,6 @@ namespace Taskify.Domain.Common.Interfaces
     {
         bool IsDeletable { get; set; }
         DateTime? DeletedAt { get; set; }
-        Guid? DeletedBy { get; set; }
+        int? DeletedBy { get; set; }
     }
 }

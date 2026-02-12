@@ -16,6 +16,7 @@ namespace Taskify.Domain.Entities
         #endregion
 
         #region Navigation Properties
+        public ICollection<ApplicationUser> Users { get; set; } = [];
         public ICollection<UserTeam> UserTeams { get; set; } = [];
         public ICollection<ToDoList> ToDoLists { get; set; } = [];
         #endregion

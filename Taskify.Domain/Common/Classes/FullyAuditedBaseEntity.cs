@@ -9,6 +9,6 @@ namespace Taskify.Domain.Common.Classes
     {
         public bool IsDeletable { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public Guid? DeletedBy { get; set; }
+        public int? DeletedBy { get; set; }
     }
 }
