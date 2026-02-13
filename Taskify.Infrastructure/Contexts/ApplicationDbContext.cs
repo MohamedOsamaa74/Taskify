@@ -21,8 +21,6 @@ namespace Taskify.Infrastructure.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Global query filter for soft deletes
             modelBuilder.Entity<ApplicationUser>().HasQueryFilter(e => e.DeletedAt == null);
             modelBuilder.Entity<ApplicationRole>().HasQueryFilter(e => e.DeletedAt == null);
             modelBuilder.Entity<TaskItem>().HasQueryFilter(e => e.DeletedAt == null);
@@ -37,7 +35,7 @@ namespace Taskify.Infrastructure.Contexts
         public DbSet<ToDoList> ToDoLists { get; set; }
         public DbSet<UserTeam> UserTeams { get; set; }
 
-        #region SaveChanges Overriding
+        #region Save Changes Overriding
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var userId = GetCurrentUserId();
