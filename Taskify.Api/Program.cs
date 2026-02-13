@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Taskify.Api.Extensions;
+using Taskify.Infrastructure;
 using Taskify.Infrastructure.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<ApplicationDbContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 IdentityConfiguration.ConfigureIdentity(builder.Services);
+DependencyInjection.AddInfrastructure(builder.Services);
+builder.Services.AddHttpContextAccessor();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
