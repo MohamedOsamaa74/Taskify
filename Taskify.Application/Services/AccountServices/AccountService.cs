@@ -111,36 +111,52 @@ namespace Taskify.Application.Services.AccountServices
         #endregion
 
         #region Logout
-        public async Task<bool> LogoutAsync()
+        public async Task<Result<TokenResponseDTO>> LogoutAsync()
         {
-            var token = GetRefreshTokenFromCookie();
-            if (string.IsNullOrEmpty(token))
-                return false;
-            var result = await RevokeRefreshTokenAsync(token);
-            if (result)
+            try
             {
-                _httpContextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
+                var token = GetRefreshTokenFromCookie();
+                if (string.IsNullOrEmpty(token))
+                    return Result<TokenResponseDTO>.Failure("no token provided");
+                var result = await RevokeRefreshTokenAsync(token);
+                if (result)
+                {
+                    _httpContextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
+                    return Result<TokenResponseDTO>.Success();
+                }
+                return Result<TokenResponseDTO>.Failure("an error occured");
             }
-            return result;
+            catch(Exception ex)
+            {
+                return Result<TokenResponseDTO>.Failure($"an error occured, {ex}");
+            }
         }
         #endregion
 
         #region Logout From All Devices
-        public async Task<bool> LogoutFromAllDevicesAsync()
+        public async Task<Result<TokenResponseDTO>> LogoutFromAllDevicesAsync()
         {
-            var token = GetRefreshTokenFromCookie();
-            if (string.IsNullOrEmpty(token))
-                return false;
-            var user = await _userManager.Users.SingleOrDefaultAsync
-                       (u => u.RefreshTokens.Any(t => t.Token == token));
-            if (user is null)
-                return false;
-            var result = await RevokeAllUserTokensAsync(user.Id.ToString());
-            if (result)
+            try
             {
-                _httpContextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
+                var token = GetRefreshTokenFromCookie();
+                if (string.IsNullOrEmpty(token))
+                    return Result<TokenResponseDTO>.Failure("No Token Provided");
+                var user = await _userManager.Users.SingleOrDefaultAsync
+                           (u => u.RefreshTokens.Any(t => t.Token == token));
+                if (user is null)
+                    return Result<TokenResponseDTO>.Failure("invalid Token, there is no user for it");
+                var result = await RevokeAllUserTokensAsync(user.Id.ToString());
+                if (result)
+                {
+                    _httpContextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
+                    return Result<TokenResponseDTO>.Success();
+                }
+                return Result<TokenResponseDTO>.Failure("an error occured");
             }
-            return result;
+            catch (Exception ex)
+            {
+                return Result<TokenResponseDTO>.Failure($"an error occured, {ex}");
+            }
         }
         #endregion
 
@@ -171,53 +187,79 @@ namespace Taskify.Application.Services.AccountServices
         #endregion
 
         #region Change Password
-        public async Task<bool> ChangePasswordAsync(ChangePasswordDTO model)
+        public async Task<Result<TokenResponseDTO>> ChangePasswordAsync(ChangePasswordDTO model)
         {
-            var user = await GetCurrentUserAsync();
-            if (user is null || model.NewPassword != model.ConfirmNewPassword)
-                return false;
-            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-            if (result.Succeeded)
+            try
             {
-                await RevokeAllUserTokensAsync(user.Id.ToString());
-                _httpContextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
-                return true;
+                var user = await GetCurrentUserAsync();
+                if (user is null)
+                    return Result<TokenResponseDTO>.NotFound("User not found");
+                if(! await _userManager.CheckPasswordAsync(user, model.CurrentPassword))
+                    return Result<TokenResponseDTO>.Failure("Wrong Password");
+                if (model.NewPassword != model.ConfirmNewPassword)
+                    return Result<TokenResponseDTO>.Failure("Passwords don't match");
+
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    await RevokeAllUserTokensAsync(user.Id.ToString());
+                    _httpContextAccessor.HttpContext.Response.Cookies.Delete("refreshToken");
+                    return Result<TokenResponseDTO>.Success();
+                }
+                return Result<TokenResponseDTO>.Failure($"an error occured, {result.Errors}");
             }
-            return false;
+            catch (Exception ex)
+            {
+                return Result<TokenResponseDTO>.Failure($"an error occured, {ex}");
+            }
         }
         #endregion
 
         #region Create Role
-        public async Task<bool> CreateRoleAsync(string name)
+        public async Task<Result<TokenResponseDTO>> CreateRoleAsync(string name)
         {
-            if (await _roleManager.FindByNameAsync(name) != null)
-                return false;
-            var role = new ApplicationRole
+            try
             {
-                Name = name,
-            };
-            var result = await _roleManager.CreateAsync(role);
-            if (!result.Succeeded)
-                return false;
-            return true;
+                if (await _roleManager.FindByNameAsync(name) != null)
+                    return Result<TokenResponseDTO>.NotFound("Role does not exist");
+                var role = new ApplicationRole
+                {
+                    Name = name,
+                };
+                var result = await _roleManager.CreateAsync(role);
+                if (!result.Succeeded)
+                    return Result<TokenResponseDTO>.Failure($"{result.Errors}");
+                return Result<TokenResponseDTO>.Success();
+            }
+            catch (Exception ex)
+            {
+                return Result<TokenResponseDTO>.Failure($"an error occured, {ex}");
+            }
         }
         #endregion
 
         #region Add User to Role
-        public async Task<bool> AddUserToRoleAsync(UserRoleDTO model)
+        public async Task<Result<TokenResponseDTO>> AddUserToRoleAsync(UserRoleDTO model)
         {
-            var user = await _userManager.FindByNameAsync(model.UserName);
-            if (user is null)
-                return false;
-            var role = await _roleManager.FindByNameAsync(model.RoleName);
-            if (role is null)
-                return false;
-            if (await _userManager.IsInRoleAsync(user, model.RoleName))
-                return false;
-            var result = await _userManager.AddToRoleAsync(user, model.RoleName);
-            if (!result.Succeeded)
-                return false;
-            return true;
+            try
+            {
+                var user = await _userManager.FindByNameAsync(model.UserName);
+                if (user is null)
+                    return Result<TokenResponseDTO>.NotFound("User does not exist");
+                var role = await _roleManager.FindByNameAsync(model.RoleName);
+                if (role is null)
+                    return Result<TokenResponseDTO>.NotFound("Role does not exist");
+                if (await _userManager.IsInRoleAsync(user, model.RoleName))
+                    return Result<TokenResponseDTO>.Failure("User is already in role");
+                var result = await _userManager.AddToRoleAsync(user, model.RoleName);
+                if (!result.Succeeded)
+                    return Result<TokenResponseDTO>.Failure($"{result.Errors}");
+                return Result<TokenResponseDTO>.Success();
+            }
+            catch (Exception ex)
+            {
+                return Result<TokenResponseDTO>.Failure($"an error occured, {ex}");
+            }
         }
         #endregion
 

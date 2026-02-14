@@ -10,11 +10,11 @@ namespace Taskify.Application.Services.AccountServices
     {
         Task<Result<TokenResponseDTO>> RegisterAsync(RegisterUserDTO model);
         Task<Result<TokenResponseDTO>> LoginAsync(LoginUserDTO model);
-        Task<bool> LogoutAsync();
-        Task<bool> LogoutFromAllDevicesAsync();
+        Task<Result<TokenResponseDTO>> LogoutAsync();
+        Task<Result<TokenResponseDTO>> LogoutFromAllDevicesAsync();
         Task<Result<TokenResponseDTO>> RefreshTokenAsync();
-        Task<bool> ChangePasswordAsync(ChangePasswordDTO model);
-        Task<bool> CreateRoleAsync(string name);
-        Task<bool> AddUserToRoleAsync(UserRoleDTO model);
+        Task<Result<TokenResponseDTO>> ChangePasswordAsync(ChangePasswordDTO model);
+        Task<Result<TokenResponseDTO>> CreateRoleAsync(string name);
+        Task<Result<TokenResponseDTO>> AddUserToRoleAsync(UserRoleDTO model);
     }
 }

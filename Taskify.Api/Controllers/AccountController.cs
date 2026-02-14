@@ -42,24 +42,20 @@ namespace Taskify.Api.Controllers
         #region Logout
         [Authorize]
         [HttpPost("logout")]
-        public async Task<IActionResult> LogoutAsync()
+        public async Task<Result<TokenResponseDTO>> LogoutAsync()
         {
             var result = await _accountService.LogoutAsync();
-            if (!result)
-                return BadRequest("Logout failed");
-            return Ok("Logged out successfully");
+            return result;
         }
         #endregion
 
         #region Logout From All Devices
         [Authorize]
         [HttpPost("logoutFromAllDevices")]
-        public async Task<IActionResult> LogoutFromAllDevicesAsync()
+        public async Task<Result<TokenResponseDTO>> LogoutFromAllDevicesAsync()
         {
             var result = await _accountService.LogoutFromAllDevicesAsync();
-            if (!result)
-                return BadRequest("Logout From All Devices failed");
-            return Ok("Logged out From All Devices successfully");
+            return result;
         }
         #endregion
 
@@ -75,44 +71,36 @@ namespace Taskify.Api.Controllers
         #region Change Password
         [Authorize]
         [HttpPost("changePassword")]
-        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDTO model)
+        public async Task<Result<TokenResponseDTO>> ChangePasswordAsync([FromBody] ChangePasswordDTO model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return Result<TokenResponseDTO>.Failure($"Model State Error:{ModelState}");
             }
             var result = await _accountService.ChangePasswordAsync(model);
-            if (!result)
-                return BadRequest("Password change failed");
-            return Ok("Password changed successfully, Please login Again");
+            return result;
         }
         #endregion
 
         #region Create Role
         [Authorize(Roles = UserRole.Admin)]
         [HttpPost("Create Role")]
-        public async Task<IActionResult> CreateRoleAsync(string Name)
+        public async Task<Result<TokenResponseDTO>> CreateRoleAsync(string Name)
         {
-            if (string.IsNullOrEmpty(Name))
-                return BadRequest("Name must be Provided");
             var result = await _accountService.CreateRoleAsync(Name);
-            if (!result)
-                return BadRequest();
-            return Ok("Role Created Successfully");
+            return result;
         }
         #endregion
 
         #region Add User to Role
         [Authorize(Roles = UserRole.Admin)]
         [HttpPost("AddUserToRole")]
-        public async Task<IActionResult> AddUserToRoleAsync(UserRoleDTO model)
+        public async Task<Result<TokenResponseDTO>> AddUserToRoleAsync(UserRoleDTO model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return Result<TokenResponseDTO>.Failure($"Model State Error:{ModelState}");
             var result = await _accountService.AddUserToRoleAsync(model);
-            if (!result)
-                return BadRequest("Failed To Add User To Role");
-            return Ok("Added User To Role Successfully");
+            return result;
         }
         #endregion
     }
