@@ -4,12 +4,15 @@ using System.Text;
 
 namespace Taskify.Application.ResultPattern
 {
-    public class Result<T>
+    public interface IResult {
+        int StatusCode { get; }
+    }
+    public class Result<T> : IResult
     {
         public string Message { get; init; }
         public bool IsSuccess { get; init; }
         public int StatusCode { get; init; }
-        public T? Data;
+        public T? Data { get; init; }
         public bool IsError => !IsSuccess;
         private Result(bool isSuccess, string message, ResultStatus status)
         {
