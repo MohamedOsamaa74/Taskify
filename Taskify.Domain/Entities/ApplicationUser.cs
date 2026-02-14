@@ -12,11 +12,10 @@ namespace Taskify.Domain.Entities
     {
         #region Properties
         [Required]
-        public string FullNameEn {  get; set; }
-        [Required]
-        public string FullNameAr {  get; set; }
+        public string FullName {  get; set; }
         [Required]
         public string MobileNumber {  get; set; }
+        public List<RefreshToken>? RefreshTokens { get; set; }
         #endregion
 
         #region Audit
