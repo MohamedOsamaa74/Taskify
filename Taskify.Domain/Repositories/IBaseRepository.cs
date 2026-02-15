@@ -5,6 +5,7 @@ namespace Taskify.Domain.Repositories
     public interface IBaseRepository<T, TKEY> where T : class
     {
         Task<T?> GetByIdAsync(TKEY id);
+        Task<T?> GetSingleAsync(Expression<Func<T, bool>> predicate);
         IQueryable<T> GetAll();
         IQueryable<T> GetAll(Expression<Func<T, bool>> predicate);
         Task AddAsync(T item);

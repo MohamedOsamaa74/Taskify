@@ -31,6 +31,7 @@ namespace Taskify.Infrastructure.Repositories
         public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate) => _context.Set<T>().Where(predicate);
 
         public async Task<T?> GetByIdAsync(TKEY id) => await _context.Set<T>().FindAsync(id);
+        public async Task<T?> GetSingleAsync(Expression<Func<T, bool>> predicate) => await _context.Set<T>().SingleOrDefaultAsync(predicate);
 
         public void Update(T item) => _context.Set<T>().Update(item);
     }
