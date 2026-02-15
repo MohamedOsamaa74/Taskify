@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Taskify.Application.Helpers;
 using Taskify.Application.Services.AccountServices;
+using Taskify.Application.Services.TeamServices;
 using Taskify.Domain.Entities;
 using Taskify.Infrastructure.Contexts;
 
@@ -51,6 +52,7 @@ namespace Taskify.Application
             #endregion
 
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ITeamService, TeamService>();
             return services;
         }
     }
