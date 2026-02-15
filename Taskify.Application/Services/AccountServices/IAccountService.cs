@@ -16,5 +16,6 @@ namespace Taskify.Application.Services.AccountServices
         Task<Result<TokenResponseDTO>> ChangePasswordAsync(ChangePasswordDTO model);
         Task<Result<TokenResponseDTO>> CreateRoleAsync(string name);
         Task<Result<TokenResponseDTO>> AddUserToRoleAsync(UserRoleDTO model);
+        Task<Result<Guid>> GetCurrentUserId();
     }
 }

@@ -263,6 +263,23 @@ namespace Taskify.Application.Services.AccountServices
         }
         #endregion
 
+        #region GetCurerentUserId
+        public async Task<Result<Guid>> GetCurrentUserId()
+        {
+            try
+            {
+                var user = await GetCurrentUserAsync();
+                if (user is null)
+                    return Result<Guid>.NotFound("No current logged in user");
+                return Result<Guid>.Success(user.Id);
+            }
+            catch(Exception ex)
+            {
+                return Result<Guid>.Failure($"An error occurred while proccessing: {ex.Message}");
+            }
+        }
+        #endregion
+
         #region private methods
 
         #region Get Current User
