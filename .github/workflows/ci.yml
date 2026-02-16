@@ -1,6 +1,5 @@
 name: CI
 
-# When to run this workflow
 on:
   push:
     branches: [ master, develop ]
@@ -14,38 +13,37 @@ jobs:
     
     steps:
     # Step 1: Get your code
-    - name: 📥 Checkout repository
+    - name:  Checkout repository
       uses: actions/checkout@v4
     
     # Step 2: Install .NET 10
-    - name: ⚙️ Setup .NET
+    - name:  Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
     
     # Step 3: Show .NET version (for debugging)
-    - name: 📊 Display .NET version
+    - name:  Display .NET version
       run: dotnet --version
     
     # Step 4: Restore NuGet packages
-    - name: 📦 Restore dependencies
+    - name:  Restore dependencies
       run: dotnet restore
     
     # Step 5: Build the solution
-    - name: 🔨 Build solution
+    - name:  Build solution
       run: dotnet build --configuration Release --no-restore
     
-    # Step 6: Run tests (commented out since you don't have tests yet)
-    # Uncomment this when you add test projects
-    # - name: 🧪 Run tests
+    # Step 6: Run tests (commented out since there is no tests yet)
+    # - name:  Run tests
     #   run: dotnet test --configuration Release --no-build --verbosity normal
     
     # Step 7: Publish the API
-    - name: 📤 Publish API
+    - name:  Publish API
       run: dotnet publish Taskify.Api/Taskify.Api.csproj --configuration Release --no-build --output ./publish
     
     # Step 8: Upload build artifacts
-    - name: 💾 Upload artifact
+    - name:  Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: taskify-api-build
