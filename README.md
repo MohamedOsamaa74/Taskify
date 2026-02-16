@@ -11,26 +11,26 @@
 
 Taskify is a robust task management API that helps teams organize their work efficiently. Built with industry best practices including:
 
-- ✅ Clean Architecture
-- ✅ Repository Pattern with Unit of Work
-- ✅ JWT Authentication & Authorization
-- ✅ Result Pattern for error handling
-- ✅ Entity Framework Core
-- ✅ ASP.NET Core Identity
+-  Clean Architecture
+-  Repository Pattern with Unit of Work
+-  JWT Authentication & Authorization
+-  Result Pattern for error handling
+-  Entity Framework Core
+-  ASP.NET Core Identity
 
-## 🚀 Features
+##  Features
 
-- 👥 **Team Management** - Create and manage teams
-- 📝 **Task Organization** - Organize tasks with todo lists
-- 🔐 **Secure Authentication** - JWT-based authentication with role-based authorization
-- 👤 **User Management** - Complete user registration and management system
-- 🎭 **Role-Based Access** - Admin, Moderator, and User roles
+-  **Team Management** - Create and manage teams
+-  **Task Organization** - Organize tasks with todo lists
+-  **Secure Authentication** - JWT-based authentication with role-based authorization
+-  **User Management** - Complete user registration and management system
+-  **Role-Based Access** - Admin, Moderator, and User roles
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Framework:** .NET 10
 - **Database:** SQL Server with Entity Framework Core
 - **Authentication:** ASP.NET Core Identity + JWT
 - **Architecture:** Clean Architecture (Domain, Application, Infrastructure, API)
 
-## 📁 Project Structure
+##  Project Structure
