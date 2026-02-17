@@ -1,4 +1,4 @@
-# 🎯 Taskify
+#  Taskify
 
 [![CI](https://github.com/MohamedOsamaa74/Taskify/workflows/CI/badge.svg)](https://github.com/MohamedOsamaa74/Taskify/actions)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
@@ -7,7 +7,7 @@
 
 > A modern task management system built with .NET 10 and Clean Architecture principles.
 
-## 📋 About
+##  About
 
 Taskify is a robust task management API that helps teams organize their work efficiently. Built with industry best practices including:
 
