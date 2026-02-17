@@ -13,8 +13,8 @@ namespace Taskify.Domain.Entities
         #endregion
 
         #region ForeignKeys
-        public int TeamId { get; set; }
-        public Guid ApplicationUserId { get; set; }
+        public int? TeamId { get; set; }
+        public Guid? ApplicationUserId { get; set; }
         #endregion
 
         #region Navigation Properties
