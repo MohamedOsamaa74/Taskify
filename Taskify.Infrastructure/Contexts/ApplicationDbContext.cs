@@ -40,7 +40,10 @@ namespace Taskify.Infrastructure.Contexts
         {
             var userId = GetCurrentUserId();
             var now = DateTime.UtcNow;
-            foreach(var entry in ChangeTracker.Entries())
+
+            HandleSoftDelete(userId, now);
+
+            foreach (var entry in ChangeTracker.Entries())
             {
                 if(entry.Entity is IAuditable auditableBaseEntity)
                 {
@@ -56,11 +59,6 @@ namespace Taskify.Infrastructure.Contexts
                             break;
                     }
                 }
-                if(entry.Entity is IDeletable deletableBaseEntity && entry.State==EntityState.Deleted)
-                {
-                    deletableBaseEntity.DeletedAt = now;
-                    deletableBaseEntity.DeletedBy = userId;
-                }
             }
             return await base.SaveChangesAsync(cancellationToken);
         }
@@ -69,6 +67,9 @@ namespace Taskify.Infrastructure.Contexts
         {
             var userId = GetCurrentUserId();
             var now = DateTime.UtcNow;
+
+            HandleSoftDelete(userId, now);
+
             foreach (var entry in ChangeTracker.Entries())
             {
                 if (entry.Entity is IAuditable auditableBaseEntity)
@@ -85,13 +86,131 @@ namespace Taskify.Infrastructure.Contexts
                             break;
                     }
                 }
-                if (entry.Entity is IDeletable deletableBaseEntity && entry.State == EntityState.Deleted)
-                {
-                    deletableBaseEntity.DeletedAt = now;
-                    deletableBaseEntity.DeletedBy = userId;
-                }
             }
             return base.SaveChanges();
+        }
+
+        private void HandleSoftDelete(Guid? userId, DateTime now)
+        {
+            // Get all entities marked for deletion
+            var deletedEntries = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Deleted && e.Entity is IDeletable)
+                .ToList();
+
+            foreach (var entry in deletedEntries)
+            {
+                var deletableEntity = (IDeletable)entry.Entity;
+
+                // Set soft delete properties
+                deletableEntity.DeletedAt = now;
+                deletableEntity.DeletedBy = userId;
+
+                // Change state to Modified instead of Deleted
+                entry.State = EntityState.Modified;
+
+                // Handle cascading soft delete for specific entities
+                CascadeSoftDelete(entry.Entity, userId, now);
+            }
+        }
+
+        private void CascadeSoftDelete(object entity, Guid? userId, DateTime now)
+        {
+            switch (entity)
+            {
+                case ToDoList toDoList:
+                    // Soft delete all TaskItems in this ToDoList
+                    var taskItems = Entry(toDoList)
+                        .Collection(t => t.Items)
+                        .Query()
+                        .Where(ti => ti.DeletedAt == null) // Only active items
+                        .ToList();
+
+                    foreach (var taskItem in taskItems)
+                    {
+                        taskItem.DeletedAt = now;
+                        taskItem.DeletedBy = userId;
+                        Entry(taskItem).State = EntityState.Modified;
+                    }
+                    break;
+
+                case Team team:
+                    // Soft delete all ToDoLists in this Team
+                    var teamToDoLists = Entry(team)
+                        .Collection(t => t.ToDoLists)
+                        .Query()
+                        .Where(tdl => tdl.DeletedAt == null)
+                        .Include(tdl => tdl.Items) // Include items for cascading
+                        .ToList();
+
+                    foreach (var toDoList in teamToDoLists)
+                    {
+                        toDoList.DeletedAt = now;
+                        toDoList.DeletedBy = userId;
+                        Entry(toDoList).State = EntityState.Modified;
+
+                        // Cascade to TaskItems
+                        foreach (var taskItem in toDoList.Items.Where(ti => ti.DeletedAt == null))
+                        {
+                            taskItem.DeletedAt = now;
+                            taskItem.DeletedBy = userId;
+                            Entry(taskItem).State = EntityState.Modified;
+                        }
+                    }
+
+                    // Soft delete all UserTeam relationships
+                    var userTeams = Entry(team)
+                        .Collection(t => t.UserTeams)
+                        .Query()
+                        .Where(ut => ut.DeletedAt == null)
+                        .ToList();
+
+                    foreach (var userTeam in userTeams)
+                    {
+                        userTeam.DeletedAt = now;
+                        userTeam.DeletedBy = userId;
+                        Entry(userTeam).State = EntityState.Modified;
+                    }
+                    break;
+
+                case ApplicationUser user:
+                    // Soft delete all user's ToDoLists
+                    var userToDoLists = Entry(user)
+                        .Collection(u => u.ToDoLists)
+                        .Query()
+                        .Where(tdl => tdl.DeletedAt == null)
+                        .Include(tdl => tdl.Items)
+                        .ToList();
+
+                    foreach (var toDoList in userToDoLists)
+                    {
+                        toDoList.DeletedAt = now;
+                        toDoList.DeletedBy = userId;
+                        Entry(toDoList).State = EntityState.Modified;
+
+                        // Cascade to TaskItems
+                        foreach (var taskItem in toDoList.Items.Where(ti => ti.DeletedAt == null))
+                        {
+                            taskItem.DeletedAt = now;
+                            taskItem.DeletedBy = userId;
+                            Entry(taskItem).State = EntityState.Modified;
+                        }
+                    }
+
+                    // Soft delete all UserTeam relationships
+                    var userTeamRels = Entry(user)
+                        .Collection(u => u.UserTeams)
+                        .Query()
+                        .Where(ut => ut.DeletedAt == null)
+                        .ToList();
+
+                    foreach (var userTeam in userTeamRels)
+                    {
+                        userTeam.DeletedAt = now;
+                        userTeam.DeletedBy = userId;
+                        Entry(userTeam).State = EntityState.Modified;
+                    }
+                    break;
+            }
         }
         private Guid? GetCurrentUserId()
         {
