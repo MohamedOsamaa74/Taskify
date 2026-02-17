@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Taskify.Application.Helpers;
 using Taskify.Application.Services.AccountServices;
+using Taskify.Application.Services.TaskItemService;
+using Taskify.Application.Services.TaskServices;
 using Taskify.Application.Services.TeamServices;
 using Taskify.Application.Services.ToDoListServices;
 using Taskify.Application.Services.UserTeamServices;
@@ -57,6 +59,7 @@ namespace Taskify.Application
             services.AddScoped<ITeamService, TeamService>();
             services.AddScoped<IUserTeamService, UserTeamService>();
             services.AddScoped<IToDoListService, ToDoListService>();
+            services.AddScoped<ITaskService, TaskService>();
             return services;
         }
     }

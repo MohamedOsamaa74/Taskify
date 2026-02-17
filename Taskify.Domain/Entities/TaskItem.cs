@@ -14,7 +14,7 @@ namespace Taskify.Domain.Entities
         #endregion
 
         #region Foreign Keys
-        public int ListId { get; set; }
+        public int ToDoListId { get; set; }
         #endregion
 
         #region Navigation Property
