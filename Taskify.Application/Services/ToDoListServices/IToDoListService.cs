@@ -12,5 +12,7 @@ namespace Taskify.Application.Services.ToDoListServices
         Task<Result<ToDoListDTO>> GetByIdAsync(int id);
         Task<Result<List<ToDoListDTO>>> GetUserToDoListsAsync(Guid userId);
         Task<Result<List<ToDoListDTO>>> GetTeamToDoListsAsync(int teamId);
+        Task<Result<ToDoListDTO>> DeleteAsync(int id);
+        Task<Result<ToDoListDTO>> UpdateAsync(int id, CreateToDoListDTO createToDoListDTO);
     }
 }

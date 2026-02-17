@@ -179,5 +179,89 @@ namespace Taskify.Application.Services.ToDoListServices
             }
         }
         #endregion
+
+        #region Delete
+        public async Task<Result<ToDoListDTO>> DeleteAsync(int id)
+        {
+            try
+            {
+                var toDoList = await _unitOfWork.ToDoListRepository.GetByIdAsync(id);
+                if(toDoList is null)
+                {
+                    return Result<ToDoListDTO>.NotFound("To Do List does not exist");
+                }
+                _unitOfWork.ToDoListRepository.Delete(toDoList);
+                await _unitOfWork.SaveChangesAsync();
+                return Result<ToDoListDTO>.Success();
+            }
+            catch(Exception ex)
+            {
+                return Result<ToDoListDTO>.Failure($"an error occurred while deleting the to do list, {ex}");
+            }
+        }
+        #endregion
+
+        #region Update
+        public async Task<Result<ToDoListDTO>> UpdateAsync(int id, CreateToDoListDTO createToDoListDTO)
+        {
+            try
+            {
+                var toDoList = await _unitOfWork.ToDoListRepository.GetByIdAsync(id);
+                if (toDoList is null)
+                    return Result<ToDoListDTO>.Failure("ToDo List does not exist");
+
+                if (createToDoListDTO.ApplicationUserId is null && createToDoListDTO.TeamId is null)
+                {
+                    return Result<ToDoListDTO>.Failure("ApplicationUserId or TeamId must be provided");
+                }
+
+                if (createToDoListDTO.ApplicationUserId is not null && createToDoListDTO.TeamId is not null)
+                {
+                    return Result<ToDoListDTO>.Failure("The ToDo List cannot belong to both user and team, only one");
+                }
+
+                ApplicationUser? user = null;
+                if(createToDoListDTO.ApplicationUserId != null)
+                {
+                    user = await _userManagser.FindByIdAsync(createToDoListDTO.ApplicationUserId.Value.ToString());
+                    if (user is null)
+                    {
+                        return Result<ToDoListDTO>.Failure("User Does not exist");
+                    }
+                }
+                Team? team = null;
+                if(createToDoListDTO.TeamId  != null)
+                {
+                    team = await _unitOfWork.TeamRepository.GetByIdAsync(createToDoListDTO.TeamId.Value);
+                    if (team is null)
+                    {
+                        return Result<ToDoListDTO>.Failure("Team Does not exist");
+                    }
+                }
+                toDoList.Name = createToDoListDTO.Name;
+                toDoList.Description = createToDoListDTO.Description;
+                toDoList.ApplicationUserId = createToDoListDTO.ApplicationUserId;
+                toDoList.TeamId = createToDoListDTO.TeamId;
+                _unitOfWork.ToDoListRepository.Update(toDoList);
+                await _unitOfWork.SaveChangesAsync();
+
+                var toDoListDTO = new ToDoListDTO
+                {
+                    Id = toDoList.Id,
+                    Name = toDoList.Name,
+                    Description = toDoList.Description,
+                    TeamId = toDoList?.TeamId,
+                    TeamName = team?.Name,
+                    ApplicationUserId = toDoList?.ApplicationUserId,
+                    UserName = user?.UserName
+                };
+                return Result<ToDoListDTO>.Success(toDoListDTO);
+            }
+            catch(Exception ex)
+            {
+                return Result<ToDoListDTO>.Failure($"an error occurred while updating the ToDo List, {ex}");
+            }
+        }
+        #endregion
     }
 }

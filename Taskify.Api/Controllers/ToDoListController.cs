@@ -41,5 +41,21 @@ namespace Taskify.Api.Controllers
         {
             return await _toDoListService.GetTeamToDoListsAsync(id);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<Result<ToDoListDTO>> DeleteAsync(int id)
+        {
+            return await _toDoListService.DeleteAsync(id);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<Result<ToDoListDTO>> UpdateAsync(int id, [FromBody] CreateToDoListDTO createToDoListDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Result<ToDoListDTO>.Failure($"Invalid Model State,{ModelState}");
+            }
+            return await _toDoListService.UpdateAsync(id, createToDoListDTO);
+        }
     }
 }
