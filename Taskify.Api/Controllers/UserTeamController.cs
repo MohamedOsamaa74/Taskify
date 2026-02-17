@@ -32,7 +32,7 @@ namespace Taskify.Api.Controllers
         }
 
         [Authorize]
-        [HttpGet()]
+        [HttpGet]
         public async Task<Result<List<UserTeamDTO>>> GetUserTeamsAsync([FromQuery] Guid? userId)
         {
             return await _userTeamService.GetUserTeamsAsync(userId);

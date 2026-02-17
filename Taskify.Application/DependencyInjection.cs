@@ -9,6 +9,7 @@ using System.Text;
 using Taskify.Application.Helpers;
 using Taskify.Application.Services.AccountServices;
 using Taskify.Application.Services.TeamServices;
+using Taskify.Application.Services.ToDoListServices;
 using Taskify.Application.Services.UserTeamServices;
 using Taskify.Domain.Entities;
 using Taskify.Infrastructure.Contexts;
@@ -55,6 +56,7 @@ namespace Taskify.Application
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITeamService, TeamService>();
             services.AddScoped<IUserTeamService, UserTeamService>();
+            services.AddScoped<IToDoListService, ToDoListService>();
             return services;
         }
     }
