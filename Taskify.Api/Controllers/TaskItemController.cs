@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Taskify.Application.DTOs.TaskDTOs;
 using Taskify.Application.ResultPattern;
@@ -12,6 +13,7 @@ namespace Taskify.Api.Controllers
     {
         private readonly ITaskService _taskService = taskService;
 
+        [Authorize]
         [HttpPost]
         public async Task<Result<TaskDTO>> CreateAsync(CreateTaskDTO createTaskDTO)
         {
@@ -28,12 +30,14 @@ namespace Taskify.Api.Controllers
             return await _taskService.GetByIdAsync(id);
         }
 
+        [Authorize]
         [HttpGet("ToDoList/{id}")]
         public async Task<Result<List<TaskDTO>>> GetByListIDAsync(int id)
         {
             return await _taskService.GetByListIdAsync(id);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<Result<TaskDTO>> UpdateAsync(int id, CreateTaskDTO updateTaskDTO)
         {
@@ -44,6 +48,7 @@ namespace Taskify.Api.Controllers
             return await _taskService.UpdateAsync(id, updateTaskDTO);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<Result<TaskDTO>> DeleteAsync(int id)
         {

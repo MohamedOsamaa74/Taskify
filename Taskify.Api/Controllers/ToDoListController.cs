@@ -42,12 +42,14 @@ namespace Taskify.Api.Controllers
             return await _toDoListService.GetTeamToDoListsAsync(id);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<Result<ToDoListDTO>> DeleteAsync(int id)
         {
             return await _toDoListService.DeleteAsync(id);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<Result<ToDoListDTO>> UpdateAsync(int id, [FromBody] CreateToDoListDTO createToDoListDTO)
         {
